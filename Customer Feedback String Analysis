@@ -1,0 +1,156 @@
+import pandas as pd
+data = {
+    "CustomerID": range(1, 51),
+    "Name": [
+        "Alice Johnson", "Bob Smith", "Charlie Adams", "David Lee", "Eva Brown",
+        "Frank Harris", "Grace Clark", "Hank Allen", "Ivy Scott", "Jack Turner",
+        "Kara White", "Liam King", "Mia Young", "Noah Hall", "Olivia Green",
+        "Paul Wright", "Quinn Baker", "Rose Carter", "Sam Lewis", "Tina Morris",
+        "Uma Nelson", "Victor Reed", "Wendy Brooks", "Xander Price", "Yara Bell",
+        "Zane Ward", "Amy Carter", "Brian Fox", "Cindy Stone", "Derek Lane",
+        "Ella Black", "Felix Moore", "Gina Hayes", "Harry Cole", "Isla Ford",
+        "Jake Long", "Kylie Page", "Leo Mills", "Maya Ross", "Nate Gray",
+        "Oscar Diaz", "Penny Shaw", "Quincy Hart", "Rita Nash", "Steve Owen",
+        "Tara Hunt", "Umar Kent", "Vera Watts", "Will Ross", "Zoe Lake"
+    ],
+    "feedback": [
+        "Great product and amazing service!",
+        "The delivery was late but quality was good.",
+        "Loved the packaging and presentation.",
+        "Customer support was helpful and polite.",
+        "Product arrived damaged, very disappointed.",
+        "Excellent build quality and fast shipping.",
+        "The size was smaller than expected.",
+        "Happy with my purchase, will order again.",
+        "Color was different from the pictures.",
+        "Absolutely fantastic! Highly recommend.",
+        "Item missing from the package.",
+        "Quick response from support team.",
+        "Product exceeded my expectations.",
+        "Too expensive for the quality.",
+        "Will definitely buy again.",
+        "Average quality, nothing special.",
+        "Superb! Worth every penny.",
+        "Delivery was earlier than expected.",
+        "Bad experience, won't return.",
+        "Satisfied with the service.",
+        "Packaging could be better.",
+        "Loved the attention to detail.",
+        "Item was as described.",
+        "The product smells bad.",
+        "Shipping took too long.",
+        "Great value for money.",
+        "The color faded after wash.",
+        "My order was incomplete.",
+        "Very user-friendly product.",
+        "The design is very stylish.",
+        "Not as advertised.",
+        "The item broke after one use.",
+        "Loved it, great purchase.",
+        "Product feels premium.",
+        "The product is eco-friendly.",
+        "Item quality was poor.",
+        "Good price and fast delivery.",
+        "Packaging was beautiful.",
+        "Highly unsatisfied.",
+        "Product works perfectly.",
+        "Had to return the item.",
+        "Customer care was unhelpful.",
+        "Item is lightweight.",
+        "The instructions were unclear.",
+        "Product is safe for kids.",
+        "The price is reasonable.",
+        "Very disappointed with quality.",
+        "Fast replacement provided.",
+        "Color is vibrant.",
+        "Extremely happy with purchase."
+    ]
+}
+
+df = pd.DataFrame(data)
+
+
+
+
+class CustomerFeedbackAnalyzer():
+  def __init__(self,df):
+    self.df = pd.DataFrame(df)
+
+  # Basic Cleanup
+  def clean_feedback(self):
+    self.df['cleaned_feedback'] = self.df['feedback'].apply(lambda x : x.strip().lower().capitalize())
+  
+  # Find Keywords in Feedback
+  def keyword_search(self , keyword):
+    keyword_lower = keyword.lower()
+    self.df[f'contains_{keyword}'] = self.df['feedback'].apply(lambda x : keyword_lower in x.lower())
+
+  def keyword_count(self , keyword):
+    keyword_lower = keyword.lower()
+    self.df[f'{keyword}_count'] = self.df['feedback'].apply(lambda x : x.lower().count(keyword_lower))
+    
+  def replace_word(self,old,new):
+    self.df['Modified_word'] = self.df['feedback'].apply(lambda x : x.replace(old,new))
+
+  def split_feedback(self):
+    self.df['word_list'] = self.df['feedback'].apply(lambda x : x.split())
+
+  def join_feedback(self):
+    if 'word_list' in self.df.columns:
+      self.df['rejoined_feedback'] = self.df['word_list'].apply(lambda words: " ".join(words))
+
+  def title_case(self):
+    self.df['title_feedback'] = self.df['feedback'].apply(lambda x : x.title())
+
+  def check_start_end(self, start_word, end_word):
+    self.df['starts_with'] = self.df['feedback'].apply(lambda x : x.lower().startswith(start_word.lower()))
+    self.df['ends_with'] = self.df['feedback'].apply(lambda x: x.lower().endswith(end_word.lower()))
+
+  def remove_special_chars(self):
+    self.df['Alphanumeric'] = self.df['feedback'].apply(lambda x: "".join(ch for ch in x if ch.isalnum() or ch.isspace()))
+
+  def reverse_feedback(self):
+    self.df['reversed_feedback'] = self.df['feedback'].apply(lambda x : x[::-1])
+
+  def format_feedback(self, width = 50):
+    self.df['Centered'] = self.df['feedback'].apply(lambda x : x.center(width, '*'))
+    self.df['ljust'] = self.df['feedback'].apply(lambda x : x.ljust(width, '-'))
+    self.df['rjust'] = self.df['feedback'].apply(lambda x : x.rjust(width, '-'))
+
+  def summary(self):
+    total_rows = len(self.df)
+    avg_length = self.df['feedback'].apply(len).mean()
+    return {
+        "Total Feedback: " : total_rows,
+        "Average Feedback Length:" : avg_length
+    }
+
+  def export(self , filename):
+    self.df.to_csv(filename, index=False)
+    print(f"Data Exported to filenamae {filename}")
+
+  def display(self , rows = 10):
+    print(self.df.head(rows))
+
+
+
+
+
+#Using the Class
+analyzer = CustomerFeedbackAnalyzer(df)
+analyzer.clean_feedback()
+analyzer.keyword_search("great")
+analyzer.keyword_count("product")
+analyzer.replace_word("product", "item")
+analyzer.split_feedback()
+analyzer.join_feedback()
+analyzer.title_case()
+analyzer.check_start_end("great", "service!")
+analyzer.remove_special_chars()
+analyzer.reverse_feedback()
+analyzer.format_feedback(width=60)
+analyzer.display(rows = 10)
+print(analyzer.summary())
+analyzer.export("Customer Feedback String Analysis Project.csv")
+
+
